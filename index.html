@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>CSCR - Counter-Strike Crosshair Randomiser</title>
+
+<style>
+@font-face {
+    font-family: 'CSFont';
+    src: url('./font/cs_regular.ttf');
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background:
+        radial-gradient(circle at top, #2d3744 0%, #161b22 55%, #0b0d11 100%);
+    height: 100vh;
+    overflow: hidden;
+    color: white;
+    font-family: CSFont, Arial, sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.backgroundGlow {
+    position: absolute;
+    width: 900px;
+    height: 900px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(255,165,0,0.1) 0%, transparent 70%);
+    filter: blur(50px);
+    animation: pulse 5s infinite ease-in-out;
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); opacity: 0.7; }
+    50% { transform: scale(1.08); opacity: 1; }
+    100% { transform: scale(1); opacity: 0.7; }
+}
+
+.container {
+    position: relative;
+    width: 1000px;
+    max-width: 95%;
+    text-align: center;
+    z-index: 5;
+}
+
+.logo {
+    font-size: 80px;
+    letter-spacing: 4px;
+    color: #f39c12;
+    text-shadow:
+        0 0 15px rgba(243,156,18,0.7),
+        0 0 35px rgba(243,156,18,0.3);
+}
+
+.subtitle {
+    margin-top: 10px;
+    color: #c7d5e0;
+    font-size: 18px;
+    letter-spacing: 2px;
+}
+
+.caseArea {
+    margin-top: 55px;
+    width: 100%;
+    height: 170px;
+    border: 3px solid rgba(255,255,255,0.08);
+    background: linear-gradient(to bottom, rgba(255,255,255,0.03), rgba(0,0,0,0.35));
+    border-radius: 18px;
+    overflow: hidden;
+    position: relative;
+    backdrop-filter: blur(8px);
+    box-shadow:
+        0 0 50px rgba(0,0,0,0.5),
+        inset 0 0 20px rgba(255,255,255,0.03);
+}
+
+.centerLine {
+    position: absolute;
+    left: 50%;
+    top: 0;
+    transform: translateX(-50%);
+    width: 6px;
+    height: 100%;
+    background: #f39c12;
+    z-index: 50;
+    box-shadow: 0 0 15px #f39c12;
+}
+
+.roulette {
+    display: flex;
+    align-items: center;
+    height: 100%;
+    gap: 16px;
+    padding-left: 20px;
+    will-change: transform;
+}
+
+.card {
+    width: 260px;
+    min-width: 260px;
+    height: 120px;
+    border-radius: 14px;
+    background:
+        linear-gradient(135deg,
+        rgba(255,140,0,0.25),
+        rgba(255,255,255,0.04));
+    border: 2px solid rgba(255,255,255,0.08);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    overflow: hidden;
+}
+
+.card::before {
+    content: '';
+    position: absolute;
+    width: 140%;
+    height: 50px;
+    background: rgba(255,255,255,0.05);
+    transform: rotate(-18deg);
+    top: -10px;
+    left: -120px;
+}
+
+.cardTitle {
+    color: #f39c12;
+    font-size: 18px;
+    margin-bottom: 10px;
+    letter-spacing: 2px;
+}
+
+.cardCode {
+    font-size: 13px;
+    color: #e8edf3;
+    width: 90%;
+    word-break: break-all;
+    line-height: 1.4;
+}
+
+.controls {
+    margin-top: 35px;
+}
+
+.pickBtn {
+    border: none;
+    padding: 18px 40px;
+    border-radius: 14px;
+    background: linear-gradient(to bottom, #f39c12, #b96d00);
+    color: white;
+    font-family: CSFont, Arial, sans-serif;
+    font-size: 26px;
+    letter-spacing: 2px;
+    cursor: pointer;
+    transition: 0.15s;
+    box-shadow:
+        0 8px 25px rgba(243,156,18,0.3),
+        inset 0 2px 0 rgba(255,255,255,0.2);
+}
+
+.pickBtn:hover {
+    transform: translateY(-2px) scale(1.02);
+}
+
+.pickBtn:active {
+    transform: scale(0.98);
+}
+
+.result {
+    margin-top: 35px;
+    opacity: 0;
+    transform: translateY(10px);
+    transition: 0.3s ease;
+}
+
+.result.show {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.resultTitle {
+    color: #f39c12;
+    font-size: 28px;
+    margin-bottom: 15px;
+    letter-spacing: 3px;
+}
+
+.finalCode {
+    width: 100%;
+    padding: 20px;
+    border-radius: 12px;
+    background: rgba(0,0,0,0.35);
+    border: 2px solid rgba(255,255,255,0.08);
+    color: white;
+    font-size: 15px;
+    word-break: break-all;
+}
+
+.copyBtn {
+    margin-top: 20px;
+    border: none;
+    padding: 14px 30px;
+    border-radius: 10px;
+    background: #1e8f42;
+    color: white;
+    font-family: CSFont, Arial, sans-serif;
+    font-size: 22px;
+    letter-spacing: 2px;
+    cursor: pointer;
+    transition: 0.15s;
+}
+
+.copyBtn:hover {
+    transform: scale(1.03);
+}
+
+.footer {
+    position: absolute;
+    bottom: 15px;
+    width: 100%;
+    text-align: center;
+    color: rgba(255,255,255,0.3);
+    font-size: 12px;
+    letter-spacing: 2px;
+}
+
+@media(max-width: 800px) {
+    .logo {
+        font-size: 52px;
+    }
+
+    .card {
+        width: 220px;
+        min-width: 220px;
+    }
+
+    .pickBtn {
+        width: 100%;
+    }
+}
+</style>
+</head>
+<body>
+
+<div class="backgroundGlow"></div>
+
+<div class="container">
+
+    <div class="logo">CSCR</div>
+    <div class="subtitle">COUNTER-STRIKE CROSSHAIR RANDOMISER</div>
+
+    <div class="caseArea">
+        <div class="centerLine"></div>
+        <div class="roulette" id="roulette"></div>
+    </div>
+
+    <div class="controls">
+        <button class="pickBtn" id="pickBtn">PICK MY CROSSHAIR</button>
+    </div>
+
+    <div class="result" id="result">
+        <div class="resultTitle">YOUR CROSSHAIR</div>
+        <div class="finalCode" id="finalCode"></div>
+        <button class="copyBtn" id="copyBtn">COPY</button>
+    </div>
+
+</div>
+
+<div class="footer">CSCR • RANDOM REAL CSGO CROSSHAIRS</div>
+
+<audio id="shuffleSound" src="./sound/shuffle.mp3"></audio>
+<audio id="copiedSound" src="./sound/copied.mp3"></audio>
+
+<script>
+const roulette = document.getElementById('roulette');
+const pickBtn = document.getElementById('pickBtn');
+const result = document.getElementById('result');
+const finalCode = document.getElementById('finalCode');
+const copyBtn = document.getElementById('copyBtn');
+
+const shuffleSound = document.getElementById('shuffleSound');
+const copiedSound = document.getElementById('copiedSound');
+
+const realCrosshairCodes = [
+'CSGO-CpSwZ-9b2MG-C7Qdx-xEN4P-mZ2tJ',
+'CSGO-Z4uNT-NPRVC-wQYxq-FFioY-iDjLJ',
+'CSGO-2nvTn-fiJtH-XownK-hLXTq-fjmwG',
+'CSGO-CNoHr-Vc79F-b9fHn-xCykG-usW5F',
+'CSGO-HcFRV-GYYKT-riY86-Ov9WB-mfOUD',
+'CSGO-fPz4c-YPvnV-zOLHf-VJtOB-kpybE',
+'CSGO-phw6V-VGn46-eesdQ-LdbDb-vXDND',
+'CSGO-jwOjv-6sxUF-iSw4t-4nbSw-MNzfF',
+'CSGO-8MW6r-26O2v-SyLzJ-9jmt3-QLk9Q',
+'CSGO-fUVBo-uVAQK-SxG2d-GZAcn-Wq2AC',
+'CSGO-BC25b-qpToW-ehMFk-V63ZV-hBERE',
+'CSGO-aN4Fc-Oj4YH-YjMZK-ZdQz4-GvoQD',
+'CSGO-Vyxwv-KFcnP-cDYRx-F3hJv-vYzKG',
+'CSGO-Jp4hk-AfzML-FcpUT-2pfxZ-kSLoD',
+'CSGO-idk3k-MD5qw-6b9rH-tr7u7-KPh8E',
+'CSGO-KYFYs-tNLXD-WXmzG-raZEx-8Er7C',
+'CSGO-nZtuj-eHzcb-8fyLe-Cxbwc-NHpEM',
+'CSGO-9OysP-sFw9b-dHiXx-VXUA2-hif4D',
+'CSGO-Gfqt6-ZjheF-jyOEr-2VjX8-XTFuA',
+'CSGO-LdXHk-hatWX-JjEa8-tuLDN-5tbJD',
+'CSGO-OsK33-i3cCK-C3HFj-8NFp3-HpCxH',
+'CSGO-jvnbx-S3xFK-iEJXD-Y27Nd-AO6FP',
+'CSGO-eJxbP-TpvSq-MOhe6-PTKWW-NoRBD',
+'CSGO-BFTzN-avOyU-djZEM-FmwKd-v5TCP',
+'CSGO-TpORA-p9Ley-TLQ3P-HzXJY-U9z6A',
+'CSGO-VxTDO-uUGK3-wsSfC-kO6Yz-iyXsO',
+'CSGO-tNKL3-nvYRR-MyrEa-Ds9kN-bkWjM',
+'CSGO-fefXh-O6xYZ-FdCHQ-OP9Kq-qKwLA',
+'CSGO-4PQMC-kA9Ho-muNQv-9u2BJ-tLXoN',
+'CSGO-xaqow-cUtCU-MYdu3-qC47b-ZHZML',
+'CSGO-UwUWf-Pn8jJ-Y2XbQ-TjGUu-csPMP',
+'CSGO-jpWiH-AEZbJ-ySUbP-OKHwm-xWeDD',
+'CSGO-5DQ7P-B9Vw8-dQ3JW-GTxLm-NmQBP',
+'CSGO-y7MMa-cnJcA-wHhrE-VcqtC-3ceOw',
+'CSGO-sdVh5-c24cM-PN2sd-RoCcr-5L5mA',
+'CSGO-m98Vt-NanSV-BryrB-A5SiH-pBtdA',
+'CSGO-coqRW-fyYKL-2OvqV-hySjY-sSBUM',
+'CSGO-h4cMu-By4zY-6nHRo-8QDeK-mLh8E',
+'CSGO-fUBKG-2BeHE-AAqff-9Qh3n-UWVaK',
+'CSGO-vdQe3-HcTjS-MYPrB-yoXHR-fFu8O',
+'CSGO-UcXBk-p9Jpo-tJiAr-J6qNc-mRFuA',
+'CSGO-zhjce-fxfyW-FQe8S-ywurx-6vdqA',
+'CSGO-3Qqme-d3DAd-qyFHw-RyfXb-u66yD',
+'CSGO-aN4vK-KQx3P-uTxPT-4bYtH-HLLTM',
+'CSGO-UdNaP-KWOQR-VLOLT-c8bJs-yVWKD',
+'CSGO-UNjDW-dz4Hk-pXsH5-mGhRF-EAhKN',
+'CSGO-WGVfj-X9FQM-bFH2M-fZ7hP-JrEzN',
+'CSGO-9Snp2-VxDzS-Jn2JP-yVknP-3O7NL',
+'CSGO-nCsDP-buRvh-VePHn-jMo5Y-HWPGF',
+'CSGO-xFc9C-V6bO8-FBTaE-DJOmn-vxXoH',
+'CSGO-P4UMp-ncxRi-cKhQ8-XmkrY-6z3JE',
+'CSGO-45rCO-P7DcV-9HKSY-OhDsV-t4kXM',
+'CSGO-YBc6r-xOrFB-O2hJr-6Jf7s-2XJaA'
+];
+
+const crosshairCodes = [...realCrosshairCodes];
+
+while (crosshairCodes.length < 500) {
+    crosshairCodes.push(
+        realCrosshairCodes[
+            Math.floor(Math.random() * realCrosshairCodes.length)
+        ]
+    );
+}
+
+function createCard(code) {
+    const card = document.createElement('div');
+    card.className = 'card';
+
+    card.innerHTML = `
+        <div class="cardTitle">CROSSHAIR</div>
+        <div class="cardCode">${code}</div>
+    `;
+
+    return card;
+}
+
+function fillRoulette() {
+    roulette.innerHTML = '';
+
+    for(let i = 0; i < 120; i++) {
+        const code = crosshairCodes[Math.floor(Math.random() * crosshairCodes.length)];
+        roulette.appendChild(createCard(code));
+    }
+}
+
+fillRoulette();
+
+let spinning = false;
+
+pickBtn.addEventListener('click', () => {
+    if(spinning) return;
+
+    spinning = true;
+    result.classList.remove('show');
+    copyBtn.innerText = 'COPY';
+
+    fillRoulette();
+
+    const cards = document.querySelectorAll('.card');
+
+    const winnerIndex = Math.floor(Math.random() * 70) + 25;
+    const winnerCard = cards[winnerIndex];
+    const winnerCode = winnerCard.querySelector('.cardCode').innerText;
+
+    const cardWidth = 276;
+    const centerOffset = (window.innerWidth / 2) - (cardWidth / 2);
+
+    const finalX = -((winnerIndex * cardWidth) - centerOffset + 110);
+
+    roulette.style.transition = 'none';
+    roulette.style.transform = 'translateX(0px)';
+
+    void roulette.offsetWidth;
+
+    shuffleSound.currentTime = 0;
+    shuffleSound.play();
+
+    roulette.style.transition = 'transform 4.5s cubic-bezier(0.08,0.9,0.12,1)';
+    roulette.style.transform = `translateX(${finalX}px)`;
+
+    setTimeout(() => {
+        shuffleSound.pause();
+        shuffleSound.currentTime = 0;
+
+        finalCode.innerText = winnerCode;
+        result.classList.add('show');
+        spinning = false;
+    }, 4550);
+});
+
+copyBtn.addEventListener('click', async () => {
+    const cleanCode = finalCode.innerText.trim();
+
+    await navigator.clipboard.writeText(cleanCode);
+
+    copiedSound.currentTime = 0;
+    copiedSound.play();
+
+    copyBtn.innerText = 'COPIED!';
+
+    setTimeout(() => {
+        copyBtn.innerText = 'COPY';
+    }, 1800);
+});
+</script>
+
+</body>
+</html>
